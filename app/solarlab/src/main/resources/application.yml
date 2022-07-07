@@ -1,0 +1,31 @@
+spring:
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: create-drop
+  sql:
+    init:
+      platform: postgres
+
+  mail:
+    host: localhost
+    port: 1025
+    username: noreply
+    password: noreply
+
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: "*"
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
