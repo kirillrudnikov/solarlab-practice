@@ -28,7 +28,7 @@ public class Comment {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "advert_id")
+    @JoinColumn(name = "advert_id", nullable = false)
     @JsonBackReference
     private Advert advert;
 

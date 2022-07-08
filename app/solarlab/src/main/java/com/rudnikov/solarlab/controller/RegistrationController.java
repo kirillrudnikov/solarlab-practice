@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
 public class RegistrationController {
 
     private final RegistrationService registrationService;
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public ResponseEntity<?> createNewAccount(@RequestBody SignupRequest request) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(registrationService.createNewAccount(request));
@@ -23,7 +23,7 @@ public class RegistrationController {
         }
     }
 
-    @RequestMapping(value = "/registration/confirm", method = RequestMethod.POST)
+    @RequestMapping(value = "/signup/confirm", method = RequestMethod.POST)
     public ResponseEntity<?> confirmRegistration(@RequestParam(name = "token") String token) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(registrationService.confirmRegistration(token));

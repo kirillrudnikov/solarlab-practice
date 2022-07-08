@@ -58,7 +58,7 @@ public class AdvertController {
     }
 
     // Delete Advert from DB
-    @RequestMapping(value = "/advert/delete/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/advert/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(advertService.deleteAdvert(advertService.fetchAdvert(id)));

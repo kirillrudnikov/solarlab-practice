@@ -58,7 +58,7 @@ public class UserController {
     }
 
     // Delete User from DB
-    @RequestMapping(value = "/user/delete/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(userService.deleteUser(userService.fetchUser(id)));

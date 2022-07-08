@@ -1,19 +1,20 @@
 package com.rudnikov.solarlab.entity.enumerated;
 
-public enum UserRole {
+import org.springframework.security.core.GrantedAuthority;
 
-    USER("Пользователь"),
-    ADMINISTRATOR("Администратор");
+public enum UserRole implements GrantedAuthority {
 
-    private String name;
+    USER("USER"),
+    ADMINISTRATOR("ADMINISTRATOR");
+
+    private final String name;
 
     UserRole(String name) {
         this.name = name;
     }
 
     @Override
-    public String toString() {
-        return this.name;
+    public String getAuthority() {
+        return "ROLE_" + this.name;
     }
-
 }

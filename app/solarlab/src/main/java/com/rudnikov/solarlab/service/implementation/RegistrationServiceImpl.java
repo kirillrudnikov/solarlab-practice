@@ -11,6 +11,7 @@ import com.rudnikov.solarlab.service.EmailService;
 import com.rudnikov.solarlab.service.RegistrationService;
 import com.rudnikov.solarlab.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,10 +19,11 @@ import org.springframework.stereotype.Service;
 public class RegistrationServiceImpl implements RegistrationService {
 
     private final EmailService emailService;
+    private final UserService userService;
     private final ConfirmationTokenService confirmationTokenService;
-
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public String createNewAccount(SignupRequest request) {
 
@@ -31,14 +33,18 @@ public class RegistrationServiceImpl implements RegistrationService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
-        user.setPassword(request.getPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
         user.setRole(UserRole.USER);
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+        user.setEnabled(false);
 
         confirmationToken.setUser(user);
 
         String token = confirmationToken.getToken();
 
-        String link = "http://localhost:8080/api/registration/confirm?token=" + token;
+        String confirmationLink = "http://localhost:8080/signup/confirm?token=" + token;
 
         userRepository.save(user);
         confirmationTokenRepository.save(confirmationToken);
@@ -47,7 +53,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 request.getEmail(),
                 "noreply@rudnikov.com",
                 "Email address confirmation",
-                link
+                confirmationLink
         );
 
         return token;
@@ -55,7 +61,12 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     public Boolean confirmRegistration(String token) {
 
-        confirmationTokenService.confirmToken(confirmationTokenService.fetchConfirmationToken(token));
+        ConfirmationToken confirmationToken = confirmationTokenService.fetchConfirmationToken(token);
+        confirmationTokenService.confirmToken(confirmationToken);
+
+        User user = confirmationToken.getUser();
+        user.setEnabled(true);
+        userService.updateUser(user.getId(), user);
 
         return true;
     }

@@ -7,6 +7,8 @@ import com.rudnikov.solarlab.repository.UserRepository;
 import com.rudnikov.solarlab.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -67,6 +69,10 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
 
         return true;
+    }
+
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        return userRepository.findUserByUsernameOrEmail(login, login).get();
     }
 
 }

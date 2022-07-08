@@ -60,7 +60,7 @@ public class CommentController {
     }
 
     // Delete Comment from DB
-    @RequestMapping(value = "/comment/delete/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/comment/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(commentService.deleteComment(commentService.fetchComment(id)));
