@@ -1,5 +1,6 @@
 package com.rudnikov.solarlab.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class Advert {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference(value = "advert_author")
     private User author;
     private String title;
     private String content;
@@ -31,7 +33,7 @@ public class Advert {
     private String region;
 
     @OneToMany(mappedBy = "advert", orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference(value = "parent_advert")
     private List<Comment> comments;
 
     public Advert(User author, String title, String content, String category, String region) {

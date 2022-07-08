@@ -22,6 +22,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference(value = "comment_author")
     private User author;
 
     private String title;
@@ -29,7 +30,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference(value = "parent_advert")
     private Advert advert;
 
     public Comment(User author, String title, String content, Advert advert) {

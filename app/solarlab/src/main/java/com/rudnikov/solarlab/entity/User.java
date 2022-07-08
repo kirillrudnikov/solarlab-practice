@@ -1,6 +1,7 @@
 package com.rudnikov.solarlab.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rudnikov.solarlab.entity.enumerated.UserRole;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.*;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
@@ -32,22 +34,23 @@ public class User implements UserDetails {
     private String phoneNumber;
 
     @Column(nullable = false)
-    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "author", orphanRemoval = true)
-    private List<Advert> adverts;
-
-    @OneToMany(mappedBy = "author", orphanRemoval = true)
-    private List<Comment> comments;
-
     boolean isAccountNonExpired;
     boolean isAccountNonLocked;
     boolean isCredentialsNonExpired;
     boolean isEnabled;
+
+    @OneToMany(mappedBy = "author", orphanRemoval = true)
+    @JsonManagedReference(value = "advert_author")
+    private List<Advert> adverts;
+
+    @OneToMany(mappedBy = "author", orphanRemoval = true)
+    @JsonManagedReference(value = "comment_author")
+    private List<Comment> comments;
 
     public User(String username, String email, String phoneNumber, String password) {
         this.username = username;
