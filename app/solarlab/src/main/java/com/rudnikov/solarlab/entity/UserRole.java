@@ -1,9 +1,10 @@
-package com.rudnikov.solarlab.entity.enumerated;
+package com.rudnikov.solarlab.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 
 public enum UserRole implements GrantedAuthority {
 
+    ANONYMOUS("ANONYMOUS"),
     USER("USER"),
     ADMINISTRATOR("ADMINISTRATOR");
 

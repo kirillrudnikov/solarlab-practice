@@ -1,7 +1,7 @@
 package com.rudnikov.solarlab.service.implementation;
 
-import com.rudnikov.solarlab.entity.Comment;
-import com.rudnikov.solarlab.entity.User;
+import com.rudnikov.solarlab.entity.CommentEntity;
+import com.rudnikov.solarlab.entity.UserEntity;
 import com.rudnikov.solarlab.exception.comment.CommentAlreadyExistsException;
 import com.rudnikov.solarlab.exception.comment.CommentNotFoundException;
 import com.rudnikov.solarlab.repository.CommentRepository;
@@ -10,21 +10,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
-@Service
+@Service @Transactional
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
 
-    public List<Comment> fetchAllComments() {
+    public List<CommentEntity> fetchAllComments() {
         log.warn("Request >> Fetching all comments from database");
         return commentRepository.findAll();
     }
 
-    public Comment fetchComment(Long id) {
+    public CommentEntity fetchComment(Long id) {
 
         if (commentRepository.findById(id).isEmpty()) {
             throw new CommentNotFoundException("Answer << Comment not found!");
@@ -34,38 +35,38 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.getById(id);
     }
 
-    public Comment saveComment(User author, Comment comment) {
+    public CommentEntity saveComment(UserEntity author, CommentEntity commentEntity) {
 
-        if (commentRepository.findCommentById(comment.getId()).isPresent()) {
+        if (commentRepository.findCommentById(commentEntity.getId()).isPresent()) {
             throw new CommentAlreadyExistsException("Answer >> Comment already exists!");
         }
 
-        comment.setAuthor(author);
+        commentEntity.setAuthor(author);
 
-        log.warn("Request >> Saving comment with id = {} and parent = {} to database", comment.getId(), comment.getAdvert());
-        commentRepository.save(comment);
+        log.warn("Request >> Saving comment with id = {} and parent = {} to database", commentEntity.getId(), commentEntity.getAdvert());
+        commentRepository.save(commentEntity);
 
-        return comment;
+        return commentEntity;
     }
 
-    public Comment updateComment(Long id, Comment newComment) {
+    public CommentEntity updateComment(Long id, CommentEntity newCommentEntity) {
         if (commentRepository.findCommentById(id).isEmpty()) {
             throw new CommentNotFoundException("Answer << Comment not found!");
         }
 
-        newComment.setId(id);
+        newCommentEntity.setId(id);
 
-        return commentRepository.save(newComment);
+        return commentRepository.save(newCommentEntity);
     }
 
-    public Boolean deleteComment(Comment comment) {
+    public Boolean deleteComment(CommentEntity commentEntity) {
 
-        if (commentRepository.findById(comment.getId()).isEmpty()) {
+        if (commentRepository.findById(commentEntity.getId()).isEmpty()) {
             throw new CommentNotFoundException("Answer << Comment not found!");
         }
 
-        log.warn("Request >> Deleting comment with id = {} and parent = {} from database", comment.getId(), comment.getAdvert());
-        commentRepository.delete(comment);
+        log.warn("Request >> Deleting comment with id = {} and parent = {} from database", commentEntity.getId(), commentEntity.getAdvert());
+        commentRepository.delete(commentEntity);
 
         return true;
     }

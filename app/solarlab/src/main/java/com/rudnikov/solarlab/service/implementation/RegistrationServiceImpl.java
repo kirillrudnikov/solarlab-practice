@@ -1,8 +1,8 @@
 package com.rudnikov.solarlab.service.implementation;
 
-import com.rudnikov.solarlab.entity.ConfirmationToken;
-import com.rudnikov.solarlab.entity.User;
-import com.rudnikov.solarlab.entity.enumerated.UserRole;
+import com.rudnikov.solarlab.entity.ConfirmationTokenEntity;
+import com.rudnikov.solarlab.entity.UserEntity;
+import com.rudnikov.solarlab.entity.UserRole;
 import com.rudnikov.solarlab.repository.ConfirmationTokenRepository;
 import com.rudnikov.solarlab.repository.UserRepository;
 import com.rudnikov.solarlab.request.SignupRequest;
@@ -27,27 +27,27 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     public String createNewAccount(SignupRequest request) {
 
-        User user = new User();
-        ConfirmationToken confirmationToken = new ConfirmationToken();
+        UserEntity userEntity = new UserEntity();
+        ConfirmationTokenEntity confirmationTokenEntity = new ConfirmationTokenEntity();
 
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
-        user.setRole(UserRole.USER);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
-        user.setEnabled(false);
+        userEntity.setUsername(request.getUsername());
+        userEntity.setEmail(request.getEmail());
+        userEntity.setPhoneNumber(request.getPhoneNumber());
+        userEntity.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
+        userEntity.setRole(UserRole.USER);
+        userEntity.setIsAccountNonExpired(true);
+        userEntity.setIsAccountNonLocked(true);
+        userEntity.setIsCredentialsNonExpired(true);
+        userEntity.setIsEnabled(false);
 
-        confirmationToken.setUser(user);
+        confirmationTokenEntity.setUserEntity(userEntity);
 
-        String token = confirmationToken.getToken();
+        String token = confirmationTokenEntity.getToken();
 
         String confirmationLink = "http://localhost:8080/signup/confirm?token=" + token;
 
-        userRepository.save(user);
-        confirmationTokenRepository.save(confirmationToken);
+        userRepository.save(userEntity);
+        confirmationTokenRepository.save(confirmationTokenEntity);
 
         emailService.sendComplexMail(
                 request.getEmail(),
@@ -61,12 +61,14 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     public Boolean confirmRegistration(String token) {
 
-        ConfirmationToken confirmationToken = confirmationTokenService.fetchConfirmationToken(token);
-        confirmationTokenService.confirmToken(confirmationToken);
+        ConfirmationTokenEntity confirmationTokenEntity = confirmationTokenService.fetchConfirmationToken(token);
+        confirmationTokenService.confirmToken(confirmationTokenEntity);
 
-        User user = confirmationToken.getUser();
-        user.setEnabled(true);
-        userService.updateUser(user.getId(), user);
+        UserEntity userEntity = confirmationTokenEntity.getUserEntity();
+        userEntity.setIsEnabled(true);
+        userService.updateUser(userEntity.getId(), userEntity);
+
+        confirmationTokenRepository.delete(confirmationTokenEntity);
 
         return true;
     }

@@ -2,7 +2,6 @@ package com.rudnikov.solarlab;
 
 import com.google.gson.Gson;
 import com.rudnikov.solarlab.configuration.InitDatabase;
-import com.rudnikov.solarlab.configuration.security.WebSecurityConfiguration;
 import com.rudnikov.solarlab.controller.UserController;
 import com.rudnikov.solarlab.entity.User;
 import com.rudnikov.solarlab.entity.enumerated.UserRole;
@@ -14,12 +13,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

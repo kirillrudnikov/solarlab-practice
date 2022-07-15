@@ -1,16 +1,20 @@
 package com.rudnikov.solarlab.service;
 
-import com.rudnikov.solarlab.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+import com.rudnikov.solarlab.entity.UserEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    List<User> fetchAllUsers();
-    User fetchUser(Long id);
-    User saveUser(User user);
-    User updateUser(Long id, User newUser);
-    Boolean deleteUser(User user);
+    List<UserEntity> fetchAllUsers();
+    UserEntity fetchUser(Long id);
+    UserEntity saveUser(UserEntity userEntity);
+    UserEntity updateUser(Long id, UserEntity newUserEntity);
+    UserEntity applyPatch(Long id, JsonPatch patch) throws JsonPatchException, JsonProcessingException;
+    Boolean deleteUser(Long id);
 
 }
