@@ -1,16 +1,16 @@
 package com.rudnikov.solarlab.service;
 
-import com.rudnikov.solarlab.entity.Advert;
-import com.rudnikov.solarlab.entity.User;
+import com.rudnikov.solarlab.entity.AdvertEntity;
+import com.rudnikov.solarlab.entity.UserEntity;
 
 import java.util.List;
 
 public interface AdvertService {
 
-    List<Advert> fetchAllAdverts();
-    Advert fetchAdvert(Long id);
-    Advert saveAdvert(User author, Advert advert);
-    Advert updateAdvert(Long id, Advert newAdvert);
-    Boolean deleteAdvert(Advert advert);
+    List<AdvertEntity> fetchAllAdverts();
+    AdvertEntity fetchAdvert(Long id);
+    AdvertEntity saveAdvert(UserEntity author, AdvertEntity advertEntity);
+    AdvertEntity updateAdvert(Long id, AdvertEntity newAdvertEntity);
+    Boolean deleteAdvert(AdvertEntity advertEntity);
 
 }

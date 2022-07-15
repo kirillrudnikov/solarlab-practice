@@ -1,16 +1,16 @@
 package com.rudnikov.solarlab.service;
 
-import com.rudnikov.solarlab.entity.Comment;
-import com.rudnikov.solarlab.entity.User;
+import com.rudnikov.solarlab.entity.CommentEntity;
+import com.rudnikov.solarlab.entity.UserEntity;
 
 import java.util.List;
 
 public interface CommentService {
 
-    List<Comment> fetchAllComments();
-    Comment fetchComment(Long id);
-    Comment saveComment(User author, Comment comment);
-    Comment updateComment(Long id, Comment newComment);
-    Boolean deleteComment(Comment comment);
+    List<CommentEntity> fetchAllComments();
+    CommentEntity fetchComment(Long id);
+    CommentEntity saveComment(UserEntity author, CommentEntity commentEntity);
+    CommentEntity updateComment(Long id, CommentEntity newCommentEntity);
+    Boolean deleteComment(CommentEntity commentEntity);
 
 }

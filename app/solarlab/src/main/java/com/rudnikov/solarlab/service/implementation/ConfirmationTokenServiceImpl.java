@@ -1,6 +1,6 @@
 package com.rudnikov.solarlab.service.implementation;
 
-import com.rudnikov.solarlab.entity.ConfirmationToken;
+import com.rudnikov.solarlab.entity.ConfirmationTokenEntity;
 import com.rudnikov.solarlab.exception.confirmationtoken.ConfirmationTokenAlreadyUsedException;
 import com.rudnikov.solarlab.exception.confirmationtoken.ConfirmationTokenExpiredException;
 import com.rudnikov.solarlab.exception.confirmationtoken.ConfirmationTokenNotFoundException;
@@ -10,16 +10,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 @Slf4j
-@Service
+@Service @Transactional
 @RequiredArgsConstructor
 public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
-    public ConfirmationToken fetchConfirmationToken(String token) {
+    public ConfirmationTokenEntity fetchConfirmationToken(String token) {
 
         if (confirmationTokenRepository.findByToken(token).isEmpty()) {
             throw new ConfirmationTokenNotFoundException("Answer << Confirmation Token not exists!");
@@ -29,20 +30,20 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
         return confirmationTokenRepository.findByToken(token).get();
     }
 
-    public Boolean confirmToken(ConfirmationToken confirmationToken) {
+    public Boolean confirmToken(ConfirmationTokenEntity confirmationTokenEntity) {
 
-        if (confirmationToken.getConfirmedAt() != null) {
+        if (confirmationTokenEntity.getConfirmedAt() != null) {
             throw new ConfirmationTokenAlreadyUsedException("Answer << Confirmation Token already has been used!");
         }
 
-        LocalDateTime expiresAt = confirmationToken.getExpiresAt();
+        LocalDateTime expiresAt = confirmationTokenEntity.getExpiresAt();
 
         if (expiresAt.isBefore(LocalDateTime.now())) {
             throw new ConfirmationTokenExpiredException("Answer << Confirmation Token has been expired!");
         }
 
-        confirmationToken.setConfirmedAt(LocalDateTime.now());
-        confirmationTokenRepository.save(confirmationToken);
+        confirmationTokenEntity.setConfirmedAt(LocalDateTime.now());
+        confirmationTokenRepository.save(confirmationTokenEntity);
 
         return true;
     }

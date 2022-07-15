@@ -1,19 +1,18 @@
 package com.rudnikov.solarlab.entity;
 
-import lombok.AllArgsConstructor;
+import com.rudnikov.solarlab.entity.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.AllArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Getter
-@Setter
+@Entity @Table(name = "confirmation_tokens")
+@Getter @Setter
 @AllArgsConstructor
-@Table(name = "confirmation_tokens")
-public class ConfirmationToken {
+public class ConfirmationTokenEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,17 +31,17 @@ public class ConfirmationToken {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
-    public ConfirmationToken() {
-        this.user = null;
+    public ConfirmationTokenEntity() {
+        this.userEntity = null;
         this.token = UUID.randomUUID().toString();
         this.createdAt = LocalDateTime.now();
         this.expiresAt = LocalDateTime.now().plusMinutes(60);
     }
 
-    public ConfirmationToken(User user) {
-        this.user = user;
+    public ConfirmationTokenEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
         this.token = UUID.randomUUID().toString();
         this.createdAt = LocalDateTime.now();
         this.expiresAt = LocalDateTime.now().plusMinutes(60);

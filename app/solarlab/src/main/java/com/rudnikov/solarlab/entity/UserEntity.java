@@ -1,8 +1,5 @@
 package com.rudnikov.solarlab.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.rudnikov.solarlab.entity.enumerated.UserRole;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,14 +8,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.*;
 
-@Entity
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "users")
-public class User implements UserDetails {
+@Entity @Table(name = "users")
+@Getter @Setter @Builder
+@NoArgsConstructor @AllArgsConstructor
+public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,30 +29,36 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    boolean isAccountNonExpired;
-    boolean isAccountNonLocked;
-    boolean isCredentialsNonExpired;
-    boolean isEnabled;
+    @Column(nullable = false)
+    private Boolean isAccountNonExpired;
+
+    @Column(nullable = false)
+    private Boolean isAccountNonLocked;
+
+    @Column(nullable = false)
+    private Boolean isCredentialsNonExpired;
+
+    @Column(nullable = false)
+    private Boolean isEnabled;
 
     @OneToMany(mappedBy = "author", orphanRemoval = true)
-    @JsonManagedReference(value = "advert_author")
-    private List<Advert> adverts;
+    private List<AdvertEntity> adverts;
 
     @OneToMany(mappedBy = "author", orphanRemoval = true)
-    @JsonManagedReference(value = "comment_author")
-    private List<Comment> comments;
+    private List<CommentEntity> comments;
 
-    public User(String username, String email, String phoneNumber, String password) {
+    public UserEntity(String username, String email, String phoneNumber, String password) {
         this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
     }
 
-    public User(String username, String email, String phoneNumber, String password, UserRole role) {
+    public UserEntity(String username, String email, String phoneNumber, String password, UserRole role) {
         this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -67,15 +66,15 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public User(String username,
-                String email,
-                String phoneNumber,
-                String password,
-                UserRole role,
-                Boolean isAccountNonExpired,
-                Boolean isAccountNonLocked,
-                Boolean isCredentialsNonExpired,
-                Boolean isEnabled
+    public UserEntity(String username,
+                      String email,
+                      String phoneNumber,
+                      String password,
+                      UserRole role,
+                      Boolean isAccountNonExpired,
+                      Boolean isAccountNonLocked,
+                      Boolean isCredentialsNonExpired,
+                      Boolean isEnabled
     ) {
         this.username = username;
         this.email = email;

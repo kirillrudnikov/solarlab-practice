@@ -1,69 +1,119 @@
 package com.rudnikov.solarlab.controller;
 
-import com.rudnikov.solarlab.entity.Advert;
-import com.rudnikov.solarlab.entity.User;
+import com.rudnikov.solarlab.entity.UserEntity;
 import com.rudnikov.solarlab.exception.advert.AdvertAlreadyExistsException;
 import com.rudnikov.solarlab.exception.advert.AdvertNotFoundException;
+import com.rudnikov.solarlab.model.AdvertModel;
+import com.rudnikov.solarlab.model.mapper.AdvertMapper;
+import com.rudnikov.solarlab.model.mapper.CycleAvoidingMappingContext;
 import com.rudnikov.solarlab.service.AdvertService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
-@RestController
-@RequestMapping("/api")
+@RestController @RequestMapping(value = "/api")
 @AllArgsConstructor
 public class AdvertController {
 
+    private final AdvertMapper advertMapper;
     private final AdvertService advertService;
 
-    // Fetch all Users from DB
-    @RequestMapping(value = "/adverts", method = RequestMethod.GET)
-    public ResponseEntity<List<Advert>> fetchAllUsers() {
-        return ResponseEntity.status(HttpStatus.OK).body(advertService.fetchAllAdverts());
+    @RequestMapping(
+            value = "/adverts",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> fetchAllAdverts() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(advertMapper.castAdvertEntityCollectionToModelList
+                        (advertService.fetchAllAdverts(), new CycleAvoidingMappingContext()));
     }
 
-    // Fetch Advert from DB by ID
-    @RequestMapping(value = "/advert/get/{id}", method = RequestMethod.GET)
+    @RequestMapping(
+            value = "/advert/get/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<?> fetchAdvert(@PathVariable Long id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(advertService.fetchAdvert(id));
+            AdvertModel view = advertMapper
+                    .castAdvertEntityToModel(advertService.fetchAdvert(id), new CycleAvoidingMappingContext());
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(view);
         } catch (AdvertNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(HttpStatus.BAD_REQUEST.getReasonPhrase() + exception.getMessage());
         }
     }
 
-    // Save Advert to DB
-    @RequestMapping(value = "/advert/save", method = RequestMethod.POST)
-    public ResponseEntity<?> saveUser(@RequestBody Advert advert, @RequestBody User author) {
+    @RequestMapping(
+            value = "/advert/save",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> saveUser(@RequestBody AdvertModel advertModel, @RequestBody UserEntity author) {
         try {
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/save").toUriString());
-            return ResponseEntity.status(HttpStatus.CREATED).location(uri).body(advertService.saveAdvert(author, advert));
+            AdvertModel view = advertMapper
+                    .castAdvertEntityToModel(advertService.saveAdvert
+                            (author, advertMapper.castAdvertModelToEntity
+                                    (advertModel, new CycleAvoidingMappingContext())), new CycleAvoidingMappingContext());
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .location(uri)
+                    .body(view);
         } catch (AdvertAlreadyExistsException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(HttpStatus.BAD_REQUEST.getReasonPhrase() + exception.getMessage());
         }
     }
 
-    @RequestMapping(value = "/advert/update/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Advert newAdvert) {
+    @RequestMapping(
+            value = "/advert/update/{id}",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody AdvertModel newAdvertModel) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(advertService.updateAdvert(id, newAdvert));
+            AdvertModel view = advertMapper
+                    .castAdvertEntityToModel(advertService.updateAdvert
+                            (id, advertMapper.castAdvertModelToEntity
+                                    (newAdvertModel, new CycleAvoidingMappingContext())), new CycleAvoidingMappingContext());
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(view);
         } catch (AdvertNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(HttpStatus.BAD_REQUEST.getReasonPhrase() + exception.getMessage());
         }
     }
 
-    // Delete Advert from DB
-    @RequestMapping(value = "/advert/delete/{id}", method = RequestMethod.DELETE)
+    //patch
+
+    @RequestMapping(
+            value = "/advert/delete/{id}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(advertService.deleteAdvert(advertService.fetchAdvert(id)));
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(advertService.deleteAdvert(advertService.fetchAdvert(id)));
         } catch (AdvertNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(HttpStatus.BAD_REQUEST.getReasonPhrase() + exception.getMessage());
         }
     }
 

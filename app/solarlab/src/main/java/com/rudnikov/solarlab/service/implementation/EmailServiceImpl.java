@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-@Service
 @Slf4j
+@Service
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
 

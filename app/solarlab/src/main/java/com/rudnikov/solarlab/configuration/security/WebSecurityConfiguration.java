@@ -1,6 +1,6 @@
 package com.rudnikov.solarlab.configuration.security;
 
-import com.rudnikov.solarlab.entity.enumerated.UserRole;
+import com.rudnikov.solarlab.entity.UserRole;
 import com.rudnikov.solarlab.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +43,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/**").hasAnyRole(UserRole.USER.name(), UserRole.ADMINISTRATOR.name())
                 .antMatchers(HttpMethod.POST, "/api/**").hasRole(UserRole.ADMINISTRATOR.name())
                 .antMatchers(HttpMethod.PUT, "/api/**").hasRole(UserRole.ADMINISTRATOR.name())
-                .antMatchers(HttpMethod.DELETE, "/api/**").hasRole(UserRole.ADMINISTRATOR.name())
+                .antMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole(UserRole.USER.name(), UserRole.ADMINISTRATOR.name())
+                //.antMatchers(HttpMethod.PATCH, "/api/**").hasAnyRole(UserRole.USER.name(), UserRole.ADMINISTRATOR.name())
                 .anyRequest()
                 .authenticated()
                 .and()
